@@ -32,6 +32,7 @@ class Dictionary
     void removeNode(Node*&, const Key&);
     void clearTree(Node*&);
     void copyTree(Node*&, const Node*);
+    void addTree(Node*);
 
     // Misc
     Node* getNode(const Key&) const;
@@ -50,6 +51,7 @@ class Dictionary
         bool remove(const Key&);
         bool clear();
         bool copy(const Dictionary&);
+        void add(const Dictionary&);
 
         // modify the existin key's info
         bool update(const Key&, const Info&);
@@ -62,7 +64,7 @@ class Dictionary
 
         // operators
         const Dictionary<Key, Info>& operator=(const Dictionary&);
-        const Dictionary<Key, Info>& operator+(const Dictionary&);
+        const Dictionary<Key, Info> operator+(const Dictionary&);
 };
 
 template <typename Key, typename Info>
@@ -262,6 +264,18 @@ inline void Dictionary<Key, Info>::copyTree(Node *&curr, const Node *node)
 }
 
 template <typename Key, typename Info>
+inline void Dictionary<Key, Info>::addTree(Node *node)
+{
+    if(!node)
+        return;
+    
+    addTree(node->left);
+    addTree(node->right);
+
+    insert(node->key, node->info);
+}
+
+template <typename Key, typename Info>
 inline typename Dictionary<Key, Info>::Node *Dictionary<Key, Info>::getNode(const Key &key) const
 {
     Node* ptr = parent;
@@ -323,6 +337,7 @@ inline void Dictionary<Key, Info>::printNodes(Node *node, bool asc) const
 template <typename Key, typename Info>
 inline Dictionary<Key, Info>::Dictionary()
 {
+    elements = 0;
     parent = nullptr;
 }
 
@@ -338,7 +353,7 @@ template <typename Key, typename Info>
 inline Dictionary<Key, Info>::~Dictionary()
 {
     clear();
-    std::cout << "Dictionary deleted";
+    std::cout << "Dictionary " << this <<  " deleted\n";
 }
 
 template <typename Key, typename Info>
@@ -408,6 +423,12 @@ inline bool Dictionary<Key, Info>::copy(const Dictionary &dict)
 }
 
 template <typename Key, typename Info>
+inline void Dictionary<Key, Info>::add(const Dictionary &dict)
+{
+    addTree(dict.parent);
+}
+
+template <typename Key, typename Info>
 inline void Dictionary<Key, Info>::drawDictionary() const
 {
     std::string temp = buildTree(parent, false, "");
@@ -443,4 +464,13 @@ inline const Dictionary<Key, Info> &Dictionary<Key, Info>::operator=(const Dicti
 {
     copy(dict); // self assignment if here
     return *this;
+}
+
+template <typename Key, typename Info>
+inline const Dictionary<Key, Info> Dictionary<Key, Info>::operator+(const Dictionary &dict)
+{
+    Dictionary<Key, Info> temp(*this);
+    temp.add(dict);
+
+    return temp;
 }
