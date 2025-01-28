@@ -31,28 +31,38 @@ class Dictionary
     void insertNode(Node*&, Node*);
     void removeNode(Node*&, const Key&);
     void clearTree(Node*&);
+    void copyTree(Node*&, const Node*);
 
     // Misc
     Node* getNode(const Key&) const;
     Node* findSuccessor(Node*) const;
     std::string buildTree(Node *node, bool isLeft, const std::string prefix) const;
-    void printNodes(Node*) const;
+    void printNodes(Node*, bool) const;
     
     public:
+        // Basic class parts
         Dictionary();
         Dictionary(const Dictionary&);
         ~Dictionary();
 
+        // Public Inserion/Deletion
         bool insert(const Key&, const Info&);
         bool remove(const Key&);
         bool clear();
+        bool copy(const Dictionary&);
+
+        // modify the existin key's info
         bool update(const Key&, const Info&);
 
+        // Misc 
         void drawDictionary() const;
-        void printElements() const;
+        void printElements(bool asc = 1) const;
         void printKey(const Key&) const;
-        int getSize() const;
+        const int getSize() const;
 
+        // operators
+        const Dictionary<Key, Info>& operator=(const Dictionary&);
+        const Dictionary<Key, Info>& operator+(const Dictionary&);
 };
 
 template <typename Key, typename Info>
@@ -239,6 +249,19 @@ inline void Dictionary<Key, Info>::clearTree(Node *&node)
 }
 
 template <typename Key, typename Info>
+inline void Dictionary<Key, Info>::copyTree(Node *&curr, const Node *node)
+{
+    if(!node)
+        return;
+
+    curr = new Node{node->key, node->info, nullptr, nullptr};
+    elements++;
+
+    copyTree(curr->left, node->left);
+    copyTree(curr->right, node->right);
+}
+
+template <typename Key, typename Info>
 inline typename Dictionary<Key, Info>::Node *Dictionary<Key, Info>::getNode(const Key &key) const
 {
     Node* ptr = parent;
@@ -287,9 +310,28 @@ inline std::string Dictionary<Key, Info>::buildTree(Node *node, bool isLeft, con
 }
 
 template <typename Key, typename Info>
+inline void Dictionary<Key, Info>::printNodes(Node *node, bool asc) const
+{
+    if(!node)
+        return;
+    
+    printNodes(asc ? node->left : node->right, asc);
+    std::cout << node->key << " : " << node->info << std::endl;
+    printNodes(asc ? node->right : node->left, asc);
+}
+
+template <typename Key, typename Info>
 inline Dictionary<Key, Info>::Dictionary()
 {
     parent = nullptr;
+}
+
+template <typename Key, typename Info>
+inline Dictionary<Key, Info>::Dictionary(const Dictionary &dict)
+{
+    parent = nullptr;
+    elements = 0;
+    copyTree(parent, dict.parent);
 }
 
 template <typename Key, typename Info>
@@ -348,6 +390,20 @@ inline bool Dictionary<Key, Info>::clear()
         return false;
 
     clearTree(parent);
+    elements = 0;
+    return true;
+}
+
+template <typename Key, typename Info>
+inline bool Dictionary<Key, Info>::copy(const Dictionary &dict)
+{
+    if(&dict == this)
+        return false;
+
+    clear();
+
+    copyTree(parent, dict.parent);
+    
     return true;
 }
 
@@ -356,6 +412,12 @@ inline void Dictionary<Key, Info>::drawDictionary() const
 {
     std::string temp = buildTree(parent, false, "");
     std::cout << temp << std::endl;
+}
+
+template <typename Key, typename Info>
+inline void Dictionary<Key, Info>::printElements(bool asc) const
+{
+    printNodes(parent, asc);
 }
 
 template <typename Key, typename Info>
@@ -368,4 +430,17 @@ inline void Dictionary<Key, Info>::printKey(const Key &key) const
     }
     else
         std::cout << "Key not found\n";
+}
+
+template <typename Key, typename Info>
+inline const int Dictionary<Key, Info>::getSize() const
+{
+    return elements;
+}
+
+template <typename Key, typename Info>
+inline const Dictionary<Key, Info> &Dictionary<Key, Info>::operator=(const Dictionary &dict)
+{
+    copy(dict); // self assignment if here
+    return *this;
 }

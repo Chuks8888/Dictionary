@@ -19,6 +19,6 @@ int main()
     tree.drawDictionary();
     tree.remove(3);
     tree.drawDictionary();
-    //tree.printKey(30);
+    tree.printElements(0);
     return 0;
 }
