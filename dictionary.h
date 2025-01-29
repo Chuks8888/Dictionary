@@ -73,11 +73,8 @@ class Dictionary
         const Dictionary<Key, Info> operator+(const Dictionary&);
 };
 
-void readFileForKey(std::string filepath, Dictionary<std::string, int>& dict, const std::string& key)
+void readFileForKeys(std::string filepath, Dictionary<std::string, int>& dict)
 {
-    int number = 0;
-    dict.insert(key, 0);
-
     std::ifstream file(filepath);
 
     if(!file)
@@ -91,11 +88,9 @@ void readFileForKey(std::string filepath, Dictionary<std::string, int>& dict, co
     while(!file.eof())
     {
         file >> temp;
-        if(temp == key)
-            number++;
+        if(!dict.insert(temp, 1))
+            dict.update(temp, 1);
     }
-    dict.update(key, number);
-
     file.close();
 }
 
@@ -424,7 +419,7 @@ inline bool Dictionary<Key, Info>::update(const Key &key, const Info &info)
     Node* ptr = getNode(key);
     if(ptr)
     {
-        ptr->info = info;
+        ptr->info += info;
         return true;
     }
     return false;
