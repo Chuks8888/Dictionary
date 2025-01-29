@@ -25,7 +25,7 @@ class Dictionary
 
     // Basic BST methods
     int getHeight(Node*) const;
-    bool findKey(const Key&) const;
+    
 
     // Insertion/Deletion
     void insertNode(Node*&, Node*);
@@ -37,6 +37,8 @@ class Dictionary
     // Misc
     Node* getNode(const Key&) const;
     Node* findSuccessor(Node*) const;
+
+    // Private methods used for printing
     std::string buildTree(Node *node, bool isLeft, const std::string prefix) const;
     void printNodes(Node*, bool) const;
     
@@ -56,11 +58,14 @@ class Dictionary
         // modify the existin key's info
         bool update(const Key&, const Info&);
 
-        // Misc 
+        // Printing 
         void drawDictionary() const;
         void printElements(bool asc = 1) const;
         void printKey(const Key&) const;
+
+        // Misc
         const int getSize() const;
+        bool findKey(const Key&) const;
 
         // operators
         const Dictionary<Key, Info>& operator=(const Dictionary&);

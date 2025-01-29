@@ -64,5 +64,15 @@ int main()
     tree2 = (tree + tree3);
     assert(tree2.getSize() == 8); 
 
+    Dictionary<std::string, std::string> dict;
+
+    dict.insert("banana", "a yellow fruit");
+    dict.insert("apple", "a round fruit");
+    dict.insert("grape", "an oddly shaped fruit");
+    
+    
+    dict.drawDictionary();
+
+
     return 0;
 }
