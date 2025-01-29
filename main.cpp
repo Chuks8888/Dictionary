@@ -73,6 +73,9 @@ int main()
     
     dict.drawDictionary();
 
+    Dictionary<std::string, int> test;
+    readFileForKey("C:/Users/Hugo/git/Dictionary/test.txt", test, "Hello");
+    test.printElements();
 
     return 0;
 }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <fstream>
 
 template<typename Key, typename Info>
 class Dictionary
@@ -71,6 +72,32 @@ class Dictionary
         const Dictionary<Key, Info>& operator=(const Dictionary&);
         const Dictionary<Key, Info> operator+(const Dictionary&);
 };
+
+void readFileForKey(std::string filepath, Dictionary<std::string, int>& dict, const std::string& key)
+{
+    int number = 0;
+    dict.insert(key, 0);
+
+    std::ifstream file(filepath);
+
+    if(!file)
+    {
+        std::cerr << "file error";
+        return;
+    }
+
+    std::string temp;
+
+    while(!file.eof())
+    {
+        file >> temp;
+        if(temp == key)
+            number++;
+    }
+    dict.update(key, number);
+
+    file.close();
+}
 
 template <typename Key, typename Info>
 inline void Dictionary<Key, Info>::leftRotation(Node *&node)
